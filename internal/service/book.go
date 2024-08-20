@@ -105,6 +105,7 @@ func (s *BookService) SimulateReading(bookID int, duration time.Duration, result
 	book, err := s.GetBookById(bookID)
 	if err != nil || book == nil {
 		results <- fmt.Sprintf("Book with ID %d not found", bookID)
+		return
 	}
 
 	fmt.Printf("Reading %s by %s\n", book.Title, book.Author)
