@@ -2,6 +2,10 @@
 GET http://localhost:8080/books
 Accept: application/json
 
+### Get books by title
+GET http://localhost:8080/books?title=The%20Antichrist
+Accept: application/json
+
 ### Add a new book
 POST http://localhost:8080/books
 Content-Type: application/json
@@ -28,3 +32,6 @@ Content-Type: application/json
 
 ### Delete a book by ID
 DELETE http://localhost:8080/books/2
+
+### Simulate reading book
+POST http://localhost:8080/books/read?book_ids=1
