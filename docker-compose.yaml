@@ -1,0 +1,21 @@
+services:
+  gobooks:
+    build: .
+    container_name: gobooks
+    ports:
+      - '8080:8080'
+    depends_on:
+      - gobooks_db
+
+  gobooks_db:
+    image: mysql:latest
+    container_name: gobooks_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gobooks
+      MYSQL_USER: gobooks
+      MYSQL_PASSWORD: gobooks
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
