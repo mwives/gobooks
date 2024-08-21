@@ -3,17 +3,18 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"gobooks/internal/cli"
-	"gobooks/internal/service"
-	"gobooks/internal/web"
 	"net/http"
 	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	"gobooks/internal/cli"
+	"gobooks/internal/service"
+	"gobooks/internal/web"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./books.db")
+	db, err := sql.Open("mysql", "gobooks:gobooks@tcp(gobooks_db:3306)/gobooks")
 	if err != nil {
 		panic(err)
 	}
