@@ -32,6 +32,7 @@ func main() {
 	router.HandleFunc("GET /books", bookHandlers.GetBooks)
 	router.HandleFunc("GET /books/{id}", bookHandlers.GetBookById)
 	router.HandleFunc("POST /books", bookHandlers.CreateBook)
+	router.HandleFunc("POST /books/read", bookHandlers.SimulateReadingBooks)
 	router.HandleFunc("PUT /books/{id}", bookHandlers.UpdateBook)
 	router.HandleFunc("DELETE /books/{id}", bookHandlers.DeleteBook)
 

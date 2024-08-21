@@ -5,6 +5,8 @@ import (
 	"gobooks/internal/service"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 )
 
 type BookHandlers struct {
@@ -16,7 +18,16 @@ func NewBookHandlers(service *service.BookService) *BookHandlers {
 }
 
 func (h *BookHandlers) GetBooks(w http.ResponseWriter, r *http.Request) {
-	books, err := h.service.GetBooks()
+	bookTitle := r.URL.Query().Get("title")
+	var books []service.Book
+	var err error
+
+	if bookTitle != "" {
+		books, err = h.service.GetBooksByName(bookTitle)
+	} else {
+		books, err = h.service.GetBooks()
+	}
+
 	if err != nil {
 		http.Error(w, "failed to fetch books", http.StatusInternalServerError)
 		return
@@ -100,4 +111,33 @@ func (h *BookHandlers) DeleteBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *BookHandlers) SimulateReadingBooks(w http.ResponseWriter, r *http.Request) {
+	bookIDsStr := r.URL.Query().Get("book_ids")
+	if bookIDsStr == "" {
+		http.Error(w, "missing book ids", http.StatusBadRequest)
+		return
+	}
+
+	bookIDsList := strings.Split(bookIDsStr, ",")
+	if len(bookIDsList) == 0 || (len(bookIDsList) == 1 && bookIDsList[0] == "") {
+		http.Error(w, "invalid book ids", http.StatusBadRequest)
+		return
+	}
+
+	bookIDs := make([]int, len(bookIDsList))
+	for i, idStr := range bookIDsList {
+		bookID, err := strconv.Atoi(strings.TrimSpace(idStr))
+		if err != nil {
+			http.Error(w, "invalid book id", http.StatusBadRequest)
+			return
+		}
+		bookIDs[i] = bookID
+	}
+
+	responses := h.service.SimulateMultipleReading(bookIDs, 2*time.Second)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(responses)
 }
