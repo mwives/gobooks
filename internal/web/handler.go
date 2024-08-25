@@ -5,7 +5,6 @@ import (
 	"gobooks/internal/service"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -114,28 +113,15 @@ func (h *BookHandlers) DeleteBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *BookHandlers) SimulateReadingBooks(w http.ResponseWriter, r *http.Request) {
-	bookIDsStr := r.URL.Query().Get("book_ids")
-	if bookIDsStr == "" {
-		http.Error(w, "missing book ids", http.StatusBadRequest)
+	var input struct {
+		BookIDs []int `json:"book_ids"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 
-	bookIDsList := strings.Split(bookIDsStr, ",")
-	if len(bookIDsList) == 0 || (len(bookIDsList) == 1 && bookIDsList[0] == "") {
-		http.Error(w, "invalid book ids", http.StatusBadRequest)
-		return
-	}
-
-	bookIDs := make([]int, len(bookIDsList))
-	for i, idStr := range bookIDsList {
-		bookID, err := strconv.Atoi(strings.TrimSpace(idStr))
-		if err != nil {
-			http.Error(w, "invalid book id", http.StatusBadRequest)
-			return
-		}
-		bookIDs[i] = bookID
-	}
-
+	bookIDs := input.BookIDs
 	responses := h.service.SimulateMultipleReading(bookIDs, 2*time.Second)
 
 	w.Header().Set("Content-Type", "application/json")
