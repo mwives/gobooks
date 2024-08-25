@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -14,9 +15,14 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "gobooks:gobooks@tcp(gobooks_db:3306)/gobooks")
+	dbConnStr := os.Getenv("DB_CONN_STRING")
+	if dbConnStr == "" {
+		dbConnStr = "gobooks:gobooks@tcp(localhost:3306)/gobooks" // Default to localhost
+	}
+
+	db, err := sql.Open("mysql", dbConnStr)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer db.Close()
 

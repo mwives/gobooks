@@ -2,12 +2,14 @@ services:
   gobooks:
     build: .
     container_name: gobooks
+    environment:
+      DB_CONN_STRING: 'gobooks:gobooks@tcp(db:3306)/gobooks'
     ports:
       - '8080:8080'
     depends_on:
-      - gobooks_db
+      - db
 
-  gobooks_db:
+  db:
     image: mysql:latest
     container_name: gobooks_db
     environment:
