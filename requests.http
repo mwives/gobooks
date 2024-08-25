@@ -34,4 +34,9 @@ Content-Type: application/json
 DELETE http://localhost:8080/books/2
 
 ### Simulate reading book
-POST http://localhost:8080/books/read?book_ids=1
+POST http://localhost:8080/books/read
+Content-Type: application/json
+
+{
+  "book_ids": [1, 2, 3]
+}
